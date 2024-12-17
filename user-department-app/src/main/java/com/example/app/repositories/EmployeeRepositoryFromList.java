@@ -11,16 +11,31 @@ import com.example.app.models.Employee;
 public class EmployeeRepositoryFromList implements EmployeeRepository{
 	List<Employee> employeeList = new LinkedList<Employee>();
 	
-	public void AddEmployee(Employee newEmployee) {
+	public int AddEmployee(Employee newEmployee) {
 		employeeList.add(newEmployee);
+		return 0;
 	}
 	
-	public void RemoveEmployee(int employeePlace) {
-		employeeList.remove(employeePlace);
+	public int RemoveEmployee(int employeeId) {
+		List<Employee> employeeList = this.GetAllEmployees();
+		for (int i = 0; i < employeeList.size(); i++) {
+			if(employeeList.get(i).getId() == employeeId) {
+				employeeList.remove(i);
+				return 0;
+			}
+		}
+		return 404;
 	}
 	
-	public void EditEmployee(Employee newEmployee, int employeePlace) {
-		employeeList.set(employeePlace, newEmployee);
+	public int EditEmployee(Employee newEmployee, int employeeId) {
+		List<Employee> employeeList = this.GetAllEmployees();
+		for (int i = 0; i < employeeList.size(); i++) {
+			if(employeeList.get(i).getId() == employeeId) {
+				employeeList.set(i, newEmployee);
+				return 0;
+			}
+		}
+		return 500;
 	}
 	
 	public List<Employee> GetAllEmployees(){

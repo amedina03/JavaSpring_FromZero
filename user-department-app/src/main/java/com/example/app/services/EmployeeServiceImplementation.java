@@ -28,20 +28,17 @@ public class EmployeeServiceImplementation implements EmployeeService{
 		if(employeeList.stream().anyMatch(x -> x.getId() == newEmployee.getId())) {
 			return 409;
 		}
-		employeeRepository.AddEmployee(newEmployee);
-		return 0;
+		return employeeRepository.AddEmployee(newEmployee);
 	}
 	
 	@Override
 	public int RemoveEmployee(int employeeId) {
 		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.RemoveEmployee(i);
-				return 0;
-			}
+
+		if(!employeeList.stream().anyMatch(department -> department.getId() == employeeId)) {
+			return 404;
 		}
-		return 404;
+		return employeeRepository.RemoveEmployee(employeeId);
 	}
 	
 	@Override
@@ -54,13 +51,7 @@ public class EmployeeServiceImplementation implements EmployeeService{
 		if(employeeList.stream().anyMatch(x -> (x.getId() == newEmployee.getId() && x.getId() != employeeId))) {
 			return 409;
 		}
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.EditEmployee(newEmployee, i);
-				return 0;
-			}
-		}
-		return 404;
+		return employeeRepository.EditEmployee(newEmployee, employeeId);
 	}
 	
 	@Override
