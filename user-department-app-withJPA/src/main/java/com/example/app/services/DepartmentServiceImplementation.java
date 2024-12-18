@@ -1,8 +1,11 @@
 package com.example.app.services;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import com.example.app.models.Department;
@@ -21,44 +24,62 @@ public class DepartmentServiceImplementation implements DepartmentService{
 	}
 	
 	public List<Department> getAllDepartments(){
-		return departmentRepository.getAllDepartments();
+		try {
+			return departmentRepository.getAllDepartments();			
+		} catch (JpaSystemException e) {
+			return Collections.emptyList();
+		}
 	}
 	
 	public List<Employee> getAllDepartmentEmployees(int departmentId){
-		if(!departmentRepository.getAllDepartments().stream().anyMatch(department -> department.getId() == departmentId)){
-			return null;
+		try {
+			Optional<Department> selectedDepartment = departmentRepository.getDepartmentById(departmentId);
+			if(selectedDepartment.isEmpty()) {
+				return Collections.emptyList();
+			}
+			return selectedDepartment.get().getEmployeeList();
+			
+		} catch (JpaSystemException e) {
+			return Collections.emptyList();
 		}
-		return employeeService.GetAllEmployees().stream()
-                .filter(employee -> employee.getDepartmentId() == departmentId)
-                .collect(Collectors.toList());
 	}
 	
 	public int addDepartment(Department newDepartment) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().anyMatch(department -> department.getId() == newDepartment.getId())) {
+		try {
+			departmentRepository.addDepartment(newDepartment);
+			return 0;
+		} catch (DataIntegrityViolationException e) {
 			return 409;
+		} catch (JpaSystemException e) {
+			return 500;
 		}
-		return departmentRepository.addDepartment(newDepartment);
 	}
 	
 	public int editDepartment(Department newDepartment, int departmentId) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().noneMatch(department -> department.getId() == departmentId)) {
+		try {
+			if(departmentRepository.getDepartmentById(departmentId).isPresent()) {
+				departmentRepository.editDepartment(newDepartment, departmentId);
+				return 0;
+			}
 			return 404;
-		} else if(departmentId != newDepartment.getId() && departmentList.stream().anyMatch(department -> department.getId() == newDepartment.getId())) {
+		} catch (DataIntegrityViolationException e) {
 			return 409;
-		} 
-		return departmentRepository.editDepartment(newDepartment, departmentId);
+		} catch (JpaSystemException e) {
+			return 500;
+		}
 	}
 	
 	public int removeDepartment(int departmentId) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().noneMatch(department -> department.getId() == departmentId)) {
+		try {
+			if(departmentRepository.getDepartmentById(departmentId).isPresent()) {
+				departmentRepository.removeDepartment(departmentId);
+				return 0;
+			}
 			return 404;
-		}
-		if(employeeService.GetAllEmployees().stream().anyMatch(employee -> employee.getDepartmentId() == departmentId)) {
+		} catch (DataIntegrityViolationException e) {
 			return 409;
+		} catch (JpaSystemException e) {
+			return 500;
 		}
-		return departmentRepository.removeDepartment(departmentId);
 	}
 }

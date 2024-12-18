@@ -2,6 +2,7 @@ package com.example.app.repositories;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataAccessException;
@@ -28,6 +29,20 @@ public class DepartmentRepositoryImplementation implements DepartmentRepository 
 			return jdbcTemplate.query(sql, new DepartmentRowMapper());
 		} catch (DataAccessException e) {
 			return Collections.emptyList();
+		}
+	}
+	
+	@Override
+	public Optional<Department> getDepartmentById(int departmentId) {
+		String sql = "SELECT * FROM Departments WHERE id = ?";
+		try {
+			List<Department> departments = jdbcTemplate.query(sql, new DepartmentRowMapper(), departmentId);
+	        if (departments.isEmpty()) {
+	            return Optional.empty();
+	        }
+	        return Optional.of(departments.get(0));
+		} catch (DataAccessException e) {
+			return Optional.empty();
 		}
 	}
 

@@ -21,9 +21,9 @@ public class AppConfiguration {
 	
 	@Value("${spring.datasource.driver-class-name}")
 	String dataSourceDriverClassName;
-	
-	@Bean
-	public DataSource dataSource() {
+
+    @Bean
+    DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(dataSourceDriverClassName);
 		dataSource.setUrl(dataSourceUrl);
@@ -31,9 +31,9 @@ public class AppConfiguration {
 		dataSource.setPassword(dataSourcePassword);
 		return dataSource;
 	}
-	
-	@Bean
-	public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+
+    @Bean
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
 }

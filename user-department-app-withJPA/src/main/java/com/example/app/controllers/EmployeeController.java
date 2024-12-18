@@ -27,7 +27,7 @@ public class EmployeeController {
 	@GetMapping("/{employeeId}")
 	@ResponseBody
 	public Employee getEmployeeById(@PathVariable int employeeId) {
-		return employeeService.GetEmployeeById(employeeId);
+		return employeeService.GetEmployeeById(employeeId).orElse(null);
 	}
 	
 	@GetMapping

@@ -20,49 +20,35 @@ public class EmployeeServiceImplementation implements EmployeeService{
 	
 	@Override
 	public int AddEmployee(Employee newEmployee) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-
-		if(!departmentRepository.getAllDepartments().stream().anyMatch(department -> department.getId() == newEmployee.getDepartmentId())) {
+		if(departmentRepository.getDepartmentById(newEmployee.getDepartmentId()).isEmpty()) {
 			return 404;
 		}
-		if(employeeList.stream().anyMatch(x -> x.getId() == newEmployee.getId())) {
+		if(employeeRepository.GetEmployeeById(newEmployee.getId()).isPresent()) {
 			return 409;
 		}
 		employeeRepository.AddEmployee(newEmployee);
+		
 		return 0;
 	}
 	
 	@Override
 	public int RemoveEmployee(int employeeId) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.RemoveEmployee(i);
-				return 0;
-			}
-		}
-		return 404;
+		if(employeeRepository.GetEmployeeById(employeeId).isEmpty()) {
+			return 404;
+		} 
+		employeeRepository.RemoveEmployee(employeeId);
+		return 0;
 	}
 	
 	@Override
 	public int EditEmployee(Employee newEmployee, int employeeId) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-		if(newEmployee.getId() != employeeId) {
-			return 400;
-		}
-		if(!departmentRepository.getAllDepartments().stream().anyMatch(department -> department.getId() == newEmployee.getDepartmentId())) {
+		if(employeeRepository.GetEmployeeById(employeeId).isEmpty()) {
 			return 404;
 		}
-		if(employeeList.stream().anyMatch(x -> (x.getId() == newEmployee.getId() && x.getId() != employeeId))) {
-			return 409;
+		if(newEmployee.getId() != 0) {
+			return 400;
 		}
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.EditEmployee(newEmployee, i);
-				return 0;
-			}
-		}
-		return 500;
+		return employeeRepository.EditEmployee(newEmployee, employeeId);
 	}
 	
 	@Override

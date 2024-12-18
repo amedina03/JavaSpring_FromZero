@@ -10,34 +10,35 @@ import com.example.app.models.Employee;
 @Repository
 public class EmployeeRepositoryImplementation implements EmployeeRepository {
 
+	private final EmployeeRepositoryJPA employeeRepositoryJPA;
+	
+	public EmployeeRepositoryImplementation(EmployeeRepositoryJPA employeeRepositoryJPA) {
+		this.employeeRepositoryJPA = employeeRepositoryJPA;
+	}
+	
 	@Override
-	public int AddEmployee(Employee newEmployee) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void AddEmployee(Employee newEmployee) {
+		this.employeeRepositoryJPA.save(newEmployee);
 	}
 
 	@Override
-	public int RemoveEmployee(int employeeId) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void RemoveEmployee(int employeeId) {
+		this.employeeRepositoryJPA.deleteById(employeeId);
 	}
 
 	@Override
-	public int EditEmployee(Employee newEmployee, int employeeId) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void EditEmployee(Employee newEmployee, int employeeId) {
+		newEmployee.setId(employeeId);
+		employeeRepositoryJPA.save(newEmployee);
 	}
 
 	@Override
 	public List<Employee> GetAllEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		return employeeRepositoryJPA.findAll();
 	}
 
 	@Override
 	public Optional<Employee> GetEmployeeById(int employeeId) {
-		// TODO Auto-generated method stub
-		return null;
+		return employeeRepositoryJPA.findById(employeeId);
 	}
-
 }

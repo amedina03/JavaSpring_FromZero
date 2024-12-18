@@ -43,10 +43,4 @@ public class Employee {
 	public void setDepartment(Department department) {
 		this.department = department;
 	}
-	public int getDepartmentId() {
-		return department.getId();
-	}
-	public void setDepartmentId(int departmentId) {
-		this.department.setId(departmentId);
-	}
 }

@@ -1,77 +1,79 @@
 package com.example.app.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import com.example.app.models.Employee;
-import com.example.app.repositories.DepartmentRepository;
 import com.example.app.repositories.EmployeeRepository;
 
 @Service
 public class EmployeeServiceImplementation implements EmployeeService{
 	private final EmployeeRepository employeeRepository;
-    private final DepartmentRepository departmentRepository;
 	
-	public EmployeeServiceImplementation(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
+	public EmployeeServiceImplementation(EmployeeRepository employeeRepository) {
 		this.employeeRepository = employeeRepository;
-		this.departmentRepository = departmentRepository;
 	}
 	
 	@Override
 	public int AddEmployee(Employee newEmployee) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-
-		if(!departmentRepository.getAllDepartments().stream().anyMatch(department -> department.getId() == newEmployee.getDepartmentId())) {
-			return 404;
-		}
-		if(employeeList.stream().anyMatch(x -> x.getId() == newEmployee.getId())) {
-			return 409;
-		}
-		employeeRepository.AddEmployee(newEmployee);
-		return 0;
+	    try {
+	    	employeeRepository.AddEmployee(newEmployee);
+	        return 0;
+	    } catch (DataIntegrityViolationException e) {
+	        return 409; // No department with such id
+	    } catch (JpaSystemException e) {
+	        return 500;
+	    }
 	}
 	
 	@Override
 	public int RemoveEmployee(int employeeId) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.RemoveEmployee(i);
-				return 0;
-			}
-		}
-		return 404;
+	    try {
+	    	if(employeeRepository.GetEmployeeById(employeeId).isPresent()) {
+	    		employeeRepository.RemoveEmployee(employeeId);
+	    		return 0;	    		
+	    	}
+	    	return 404; // No employee with such id
+	    } catch (JpaSystemException e) {
+	        return 500;
+	    }
 	}
 	
 	@Override
 	public int EditEmployee(Employee newEmployee, int employeeId) {
-		List<Employee> employeeList = employeeRepository.GetAllEmployees();
-		if(newEmployee.getId() != employeeId) {
-			return 400;
-		}
-		if(!departmentRepository.getAllDepartments().stream().anyMatch(department -> department.getId() == newEmployee.getDepartmentId())) {
-			return 404;
-		}
-		if(employeeList.stream().anyMatch(x -> (x.getId() == newEmployee.getId() && x.getId() != employeeId))) {
-			return 409;
-		}
-		for (int i = 0; i < employeeList.size(); i++) {
-			if(employeeList.get(i).getId() == employeeId) {
-				employeeRepository.EditEmployee(newEmployee, i);
+		try {
+			if(employeeRepository.GetEmployeeById(employeeId).isPresent()) {
+				employeeRepository.EditEmployee(newEmployee, employeeId);
 				return 0;
 			}
+			return 404; // No employee with such id
+		} catch (DataIntegrityViolationException e) {
+			return 409; // No department with such id
+		} catch(JpaSystemException e) {
+			return 500;
 		}
-		return 500;
 	}
 	
 	@Override
 	public List<Employee> GetAllEmployees(){
-		return employeeRepository.GetAllEmployees();
+		try {
+			return employeeRepository.GetAllEmployees();			
+		} catch (JpaSystemException e) {
+			return Collections.emptyList();
+		}
 	}
 	
 	@Override
-	public Employee GetEmployeeById(int employeeId) {
-		return employeeRepository.GetEmployeeById(employeeId).orElse(null);
+	public Optional<Employee> GetEmployeeById(int employeeId) {
+		try {
+			return employeeRepository.GetEmployeeById(employeeId);			
+		} catch (JpaSystemException e) {
+			return Optional.empty();
+		}
 	}
 }

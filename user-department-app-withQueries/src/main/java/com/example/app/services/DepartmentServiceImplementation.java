@@ -34,26 +34,23 @@ public class DepartmentServiceImplementation implements DepartmentService{
 	}
 	
 	public int addDepartment(Department newDepartment) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().anyMatch(department -> department.getId() == newDepartment.getId())) {
+		if(departmentRepository.getDepartmentById(newDepartment.getId()).isPresent()) {
 			return 409;
 		}
 		return departmentRepository.addDepartment(newDepartment);
 	}
 	
 	public int editDepartment(Department newDepartment, int departmentId) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().noneMatch(department -> department.getId() == departmentId)) {
+		if(departmentRepository.getDepartmentById(departmentId).isEmpty()) {
 			return 404;
-		} else if(departmentId != newDepartment.getId() && departmentList.stream().anyMatch(department -> department.getId() == newDepartment.getId())) {
-			return 409;
+		} else if(newDepartment.getId() != 0) {
+			return 400;
 		} 
 		return departmentRepository.editDepartment(newDepartment, departmentId);
 	}
 	
 	public int removeDepartment(int departmentId) {
-		List<Department> departmentList = departmentRepository.getAllDepartments();
-		if(departmentList.stream().noneMatch(department -> department.getId() == departmentId)) {
+		if(departmentRepository.getDepartmentById(departmentId).isEmpty()) {
 			return 404;
 		}
 		if(employeeService.GetAllEmployees().stream().anyMatch(employee -> employee.getDepartmentId() == departmentId)) {
