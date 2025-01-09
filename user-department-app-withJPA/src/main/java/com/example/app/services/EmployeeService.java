@@ -3,12 +3,13 @@ package com.example.app.services;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.app.models.Employee;
+import com.example.app.dtos.EmployeeRequestDTO;
+import com.example.app.dtos.EmployeeResponseDTO;
 
 public interface EmployeeService {
-	public int AddEmployee(Employee newEmployee);
+	public int AddEmployee(EmployeeRequestDTO newEmployee);
 	public int RemoveEmployee(int employeeId);
-	public int EditEmployee(Employee newEmployee, int employeeId);
-	public List<Employee> GetAllEmployees();
-	public Optional<Employee> GetEmployeeById(int employeeId);
+	public int EditEmployee(EmployeeRequestDTO newEmployee, int employeeId);
+	public List<EmployeeResponseDTO> GetAllEmployees();
+	public Optional<EmployeeResponseDTO> GetEmployeeById(int employeeId);
 }

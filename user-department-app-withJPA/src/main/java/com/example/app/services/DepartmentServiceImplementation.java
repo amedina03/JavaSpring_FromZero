@@ -3,11 +3,14 @@ package com.example.app.services;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
+import com.example.app.dtos.DepartmentResponseDTO;
+import com.example.app.dtos.EmployeeResponseDTO;
 import com.example.app.models.Department;
 import com.example.app.models.Employee;
 import com.example.app.repositories.DepartmentRepository;
@@ -16,28 +19,32 @@ import com.example.app.repositories.DepartmentRepository;
 public class DepartmentServiceImplementation implements DepartmentService{
 
 	private final DepartmentRepository departmentRepository;
-    private final EmployeeService employeeService;
 	
-	public DepartmentServiceImplementation(DepartmentRepository departmentRepository, EmployeeService employeeService){
+	public DepartmentServiceImplementation(DepartmentRepository departmentRepository){
 		this.departmentRepository = departmentRepository;
-        this.employeeService = employeeService;
 	}
 	
-	public List<Department> getAllDepartments(){
+	public List<DepartmentResponseDTO> getAllDepartments(){
+		List<DepartmentResponseDTO> departmentDTOList;
 		try {
-			return departmentRepository.getAllDepartments();			
+			List<Department> departmentList = departmentRepository.getAllDepartments();
+			departmentDTOList = departmentList.stream().map(department -> DepartmentResponseDTO.of(department)).collect(Collectors.toList());
+			return departmentDTOList;
 		} catch (JpaSystemException e) {
 			return Collections.emptyList();
 		}
 	}
 	
-	public List<Employee> getAllDepartmentEmployees(int departmentId){
+	public List<EmployeeResponseDTO> getAllDepartmentEmployees(int departmentId){
+		List<EmployeeResponseDTO> employeeDTOList;
 		try {
 			Optional<Department> selectedDepartment = departmentRepository.getDepartmentById(departmentId);
 			if(selectedDepartment.isEmpty()) {
 				return Collections.emptyList();
 			}
-			return selectedDepartment.get().getEmployeeList();
+			List<Employee> employeeList = selectedDepartment.get().getEmployeeList();
+			employeeDTOList = employeeList.stream().map(employee -> EmployeeResponseDTO.of(employee)).collect(Collectors.toList());
+			return employeeDTOList;
 			
 		} catch (JpaSystemException e) {
 			return Collections.emptyList();

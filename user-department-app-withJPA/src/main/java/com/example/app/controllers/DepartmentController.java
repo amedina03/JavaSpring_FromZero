@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.app.dtos.DepartmentResponseDTO;
+import com.example.app.dtos.EmployeeResponseDTO;
 import com.example.app.models.Department;
-import com.example.app.models.Employee;
 import com.example.app.services.DepartmentService;
 
 @Controller
@@ -27,13 +28,13 @@ public class DepartmentController {
 	
 	@GetMapping
 	@ResponseBody
-	public List<Department> getAllDepartments(){
+	public List<DepartmentResponseDTO> getAllDepartments(){
 		return departmentService.getAllDepartments();
 	}
 	
 	@GetMapping("/{departmentId}/employees")
 	@ResponseBody
-	public List<Employee> getAllDepartmentEmployees(@PathVariable int departmentId){
+	public List<EmployeeResponseDTO> getAllDepartmentEmployees(@PathVariable int departmentId){
 		return departmentService.getAllDepartmentEmployees(departmentId);
 	}
 	

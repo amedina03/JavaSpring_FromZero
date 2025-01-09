@@ -32,7 +32,8 @@ public class DepartmentRepositoryImplementation implements DepartmentRepository 
 	}
 
 	@Override
-	public void editDepartment(Department newDepartment, int departmentId) {	
+	public void editDepartment(Department newDepartment, int departmentId) {
+		newDepartment.setId(departmentId);
 		this.departmentRepositoryJPA.save(newDepartment);
 	}
 

@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.app.models.Employee;
+import com.example.app.dtos.EmployeeRequestDTO;
+import com.example.app.dtos.EmployeeResponseDTO;
 import com.example.app.services.EmployeeService;
 
 @Controller
@@ -26,19 +27,19 @@ public class EmployeeController {
 	
 	@GetMapping("/{employeeId}")
 	@ResponseBody
-	public Employee getEmployeeById(@PathVariable int employeeId) {
+	public EmployeeResponseDTO getEmployeeById(@PathVariable int employeeId) {
 		return employeeService.GetEmployeeById(employeeId).orElse(null);
 	}
 	
 	@GetMapping
 	@ResponseBody
-	public List<Employee> getAllEmployees() {
+	public List<EmployeeResponseDTO> getAllEmployees() {
 		return employeeService.GetAllEmployees();
 	}
 	
 	@PostMapping
 	@ResponseBody
-	public Employee addEmployee(@RequestBody Employee newEmployee) {
+	public EmployeeRequestDTO addEmployee(@RequestBody EmployeeRequestDTO newEmployee) {
 		if(employeeService.AddEmployee(newEmployee) == 0) {
 			return newEmployee;
 		}
@@ -47,7 +48,7 @@ public class EmployeeController {
 	
 	@PutMapping("/{employeeId}")
 	@ResponseBody
-	public Employee editEmployee(@RequestBody Employee newEmployee, @PathVariable int employeeId) {
+	public EmployeeRequestDTO editEmployee(@RequestBody EmployeeRequestDTO newEmployee, @PathVariable int employeeId) {
 		if(employeeService.EditEmployee(newEmployee, employeeId) == 0) {
 			return newEmployee;
 		}
