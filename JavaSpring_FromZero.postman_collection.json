@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "9a58f99c-dece-4a21-b5c6-808e3f87431b",
+		"name": "JavaSpring_FromZero",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "32336982"
+	},
+	"item": [
+		{
+			"name": "Employees",
+			"item": [
+				{
+					"name": "GetAllEmployees",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8080/employees"
+					},
+					"response": []
+				},
+				{
+					"name": "GetEmployeeById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8080/employees/1"
+					},
+					"response": []
+				},
+				{
+					"name": "AddEmployee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Catalina\",\r\n    \"departmentId\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/employees"
+					},
+					"response": []
+				},
+				{
+					"name": "EditEmployee",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"CatalinaEdit\",\r\n    \"departmentId\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/employees/1"
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveEmployee",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "localhost:8080/employees/1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Departments",
+			"item": [
+				{
+					"name": "GetAllDepartments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8080/departments"
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllDepartmentEmployees",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "localhost:8080/departments/1/employees"
+					},
+					"response": []
+				},
+				{
+					"name": "AddDepartment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":2,\r\n    \"name\":\"Recursos humanos\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/departments"
+					},
+					"response": []
+				},
+				{
+					"name": "EditDepartment",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":2,\r\n    \"name\":\"Javier\",\r\n    \"departmentId\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8080/departments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveDepartment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "localhost:8080/departments/1"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
