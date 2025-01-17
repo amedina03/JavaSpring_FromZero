@@ -1,12 +1,7 @@
 package com.example.app.dtos;
 
-import jakarta.validation.constraints.NotNull;
-
 public class EmployeeRequestDTO {
-	@NotNull
 	String name;
-	
-	@NotNull
 	int departmentId;
 	
 	public EmployeeRequestDTO() {}

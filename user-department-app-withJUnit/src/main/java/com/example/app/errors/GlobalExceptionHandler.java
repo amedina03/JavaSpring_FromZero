@@ -11,12 +11,13 @@ import com.example.app.responses.ApiExceptionResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	//Internal server exception
+	//Internal server exceptions
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<ApiExceptionResponse> handleDataIntegrityViolation(DataIntegrityViolationException e){
+	public ResponseEntity<ApiExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e){
 		ApiExceptionResponse apiResponse = new ApiExceptionResponse(e.getMessage());
 		return ResponseEntity.badRequest().body(apiResponse);
 	}
+	
 	@ExceptionHandler(JpaSystemException.class)
 	public ResponseEntity<ApiExceptionResponse> handleJpaSystemException(JpaSystemException e){
 		ApiExceptionResponse apiResponse = new ApiExceptionResponse(e.getMessage());
