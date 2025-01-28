@@ -1,6 +1,7 @@
 package com.example.app.models;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -29,6 +30,18 @@ public class Department {
 	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<Employee> employeeList;
+	
+	public Department() {
+	}
+	public Department(String name) {
+	    this.name = name;
+	    this.employeeList = new ArrayList<>();
+	}
+	public Department(int id, String name) {
+	    this.id = id;
+	    this.name = name;
+	    this.employeeList = new ArrayList<>();
+	}
 	
 	public int getId() {
 		return id;

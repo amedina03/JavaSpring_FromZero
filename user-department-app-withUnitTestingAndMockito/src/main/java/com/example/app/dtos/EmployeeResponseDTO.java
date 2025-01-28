@@ -17,6 +17,18 @@ public class EmployeeResponseDTO {
     	return new EmployeeResponseDTO(employee.getId(), employee.getName(), employee.getDepartment().getName());
     }
     
+    @Override
+	public boolean equals(Object o) {
+		if(this == o)
+			return true;
+		if(o == null || o.getClass() != this.getClass())
+			return false;
+		EmployeeResponseDTO castedObject = (EmployeeResponseDTO) o;
+		if(castedObject.getId() != this.getId() || !this.getName().equals(castedObject.getName()) || !this.getDepartmentName().equals(castedObject.getDepartmentName()))
+			return false;
+		return true;
+	}
+    
 	public int getId() {
 		return id;
 	}

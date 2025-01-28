@@ -8,8 +8,15 @@ public class EmployeeRequestDTO {
 	
 	@NotNull
 	int departmentId;
-	
+
 	public EmployeeRequestDTO() {}
+	public EmployeeRequestDTO(String name) {
+		this.name = name;
+	}
+	public EmployeeRequestDTO(String name, int departmentId) {
+		this.name = name;
+		this.departmentId = departmentId;
+	}
 	
 	public String getName() {
 		return name;

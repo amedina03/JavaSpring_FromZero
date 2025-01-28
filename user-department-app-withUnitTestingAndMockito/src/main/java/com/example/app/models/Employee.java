@@ -26,7 +26,7 @@ public class Employee {
 	@Size(max = 128, message = "Name cannot exceed 128 characters")
 	private String name;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "departmentId")
 	@JsonBackReference
 	private Department department;

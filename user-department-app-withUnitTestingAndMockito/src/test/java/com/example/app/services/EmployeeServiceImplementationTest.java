@@ -1,13 +1,28 @@
 package com.example.app.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.MessageSource;
 
+import com.example.app.dtos.EmployeeRequestDTO;
+import com.example.app.dtos.EmployeeResponseDTO;
+import com.example.app.errors.DepartmentNotFoundException;
+import com.example.app.errors.EmployeeNotFoundException;
+import com.example.app.models.Department;
+import com.example.app.models.Employee;
 import com.example.app.repositories.DepartmentRepositoryJPA;
 import com.example.app.repositories.EmployeeRepositoryJPA;
+import com.example.app.utils.MessageUtil;
+
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceImplementationTest {
@@ -19,9 +34,85 @@ public class EmployeeServiceImplementationTest {
     private DepartmentRepositoryJPA departmentRepository;
 
     @Mock
-    private MessageSource messageSource;
+    private MessageUtil messageUtil;
 
     @InjectMocks
     private EmployeeServiceImplementation employeeService;
 	
+    @Test
+    void testGetEmployeeById_Success() {
+    	int employeeId = 1;
+    	Department mockDepartment = new Department("IT");
+    	Employee mockEmployee = Employee.of(new EmployeeRequestDTO("Mock Employee"), mockDepartment);
+    	EmployeeResponseDTO expectedResponse = EmployeeResponseDTO.of(mockEmployee);
+    	
+    	Mockito.when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(mockEmployee));
+    	EmployeeResponseDTO result = employeeService.getEmployeeById(employeeId);
+    	
+    	assertEquals(expectedResponse, result, "The employee response DTO should match the expected one");
+    }
+    
+    @Test
+    void testGetEmployeeById_Fail_EmployeeNotFound() {
+    	int employeeId = 99;
+    	Mockito.when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
+    	
+        assertThrows(EmployeeNotFoundException.class, () -> {
+            employeeService.getEmployeeById(employeeId);
+        }, "EmployeeNotFoundException should be thrown for non-existing employee");
+    }
+    
+    @Test
+    void testAddEmployee_Success() {
+    	int departmentId = 1;
+    	int employeeId = 1;
+    	Department mockDepartment = new Department("IT");
+    	EmployeeRequestDTO mockRequestEmployee = new EmployeeRequestDTO("Mock Employee", 1);
+        Employee mockEmployee = Employee.of(mockRequestEmployee, mockDepartment);
+        mockEmployee.setId(employeeId);
+        
+        Mockito.when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(mockDepartment));
+    	Mockito.when(employeeRepository.save(Mockito.any(Employee.class))).thenReturn(mockEmployee);
+    	
+    	EmployeeResponseDTO response = employeeService.addEmployee(mockRequestEmployee);
+    	EmployeeResponseDTO mockResponseEmployee = EmployeeResponseDTO.of(mockEmployee);
+    	
+    	assertNotNull(response, "The response should not be null");
+    	assertEquals(response, mockResponseEmployee, "Employee data should match");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(1)).save(Mockito.any(Employee.class));
+    }
+    
+    @Test
+    void testAddEmployee_Fail_DepartmentNotFound(){
+    	EmployeeRequestDTO mockRequestEmployee = new EmployeeRequestDTO("Mock Employee", 999);
+    	
+    	assertThrows(DepartmentNotFoundException.class, () -> {
+    		employeeService.addEmployee(mockRequestEmployee);
+    	}, "Department should exist previous to employee addition");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(0)).save(Mockito.any());
+    }
+    
+    @Test
+    void testEditEmployee_Success() {
+    	Department newMockDepartment = new Department(2, "DevOps");
+    	int employeeId = 1;
+    	int newDepartmentId = 2;
+    	EmployeeRequestDTO newMockRequestEmployee = new EmployeeRequestDTO("Mock Employee Edit", 2);
+        Employee newMockEmployee = Employee.of(newMockRequestEmployee, newMockDepartment);
+        newMockEmployee.setId(employeeId);
+
+        Mockito.when(departmentRepository.findById(newDepartmentId)).thenReturn(Optional.of(newMockDepartment));
+        Mockito.when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(newMockEmployee));
+        Mockito.when(employeeRepository.save(newMockEmployee)).thenReturn(newMockEmployee);
+        
+        EmployeeResponseDTO response = employeeService.editEmployee(newMockRequestEmployee, employeeId);
+        
+        assertNotNull(response,"Response should not be null");
+        assertEquals(response, EmployeeResponseDTO.of(newMockEmployee), "Employee variables should be the same");
+
+        Mockito.verify(departmentRepository, Mockito.times(1)).findById(newDepartmentId);
+        Mockito.verify(employeeRepository, Mockito.times(1)).save(newMockEmployee);
+    }
 }
