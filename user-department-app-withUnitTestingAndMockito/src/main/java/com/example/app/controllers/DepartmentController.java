@@ -21,6 +21,8 @@ import com.example.app.responses.ApiStandardResponse;
 import com.example.app.services.DepartmentService;
 import com.example.app.utils.MessageUtil;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/departments")
 public class DepartmentController {
@@ -59,7 +61,7 @@ public class DepartmentController {
 	
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<ApiStandardResponse<DepartmentResponseDTO>> addDepartment(@RequestBody Department newDepartment){
+	public ResponseEntity<ApiStandardResponse<DepartmentResponseDTO>> addDepartment(@RequestBody @Valid Department newDepartment){
 		DepartmentResponseDTO departmentResponseDTO = departmentService.addDepartment(newDepartment);
 		ApiStandardResponse<DepartmentResponseDTO> apiResponse = new ApiStandardResponse<>(messageUtil.getMessage(DEPARTMENT_ADDED), departmentResponseDTO);
 		return ResponseEntity.created(URI.create("/departments/" + apiResponse.getData().getId())).body(apiResponse);
@@ -67,7 +69,7 @@ public class DepartmentController {
 	
 	@PutMapping("/{departmentId}")
 	@ResponseBody
-	public ResponseEntity<ApiStandardResponse<DepartmentResponseDTO>> editDepartment(@RequestBody Department newDepartment, @PathVariable int departmentId) {
+	public ResponseEntity<ApiStandardResponse<DepartmentResponseDTO>> editDepartment(@RequestBody @Valid Department newDepartment, @PathVariable int departmentId) {
 		DepartmentResponseDTO departmentResponseDTO = departmentService.editDepartment(newDepartment, departmentId);
 		ApiStandardResponse<DepartmentResponseDTO> apiResponse = new ApiStandardResponse<>(messageUtil.getMessage(DEPARTMENT_EDITED), departmentResponseDTO);
 		return ResponseEntity.ok().body(apiResponse);

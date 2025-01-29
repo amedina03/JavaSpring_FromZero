@@ -20,6 +20,8 @@ import com.example.app.responses.ApiStandardResponse;
 import com.example.app.services.EmployeeService;
 import com.example.app.utils.MessageUtil;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -54,7 +56,7 @@ public class EmployeeController {
 	
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<ApiStandardResponse<EmployeeResponseDTO>> addEmployee(@RequestBody EmployeeRequestDTO newEmployee) {
+	public ResponseEntity<ApiStandardResponse<EmployeeResponseDTO>> addEmployee(@RequestBody @Valid EmployeeRequestDTO newEmployee) {
 		EmployeeResponseDTO employeeResponseDTO = employeeService.addEmployee(newEmployee);
 		ApiStandardResponse<EmployeeResponseDTO> apiResponse = new ApiStandardResponse<>(messageUtil.getMessage(EMPLOYEE_ADDED), employeeResponseDTO);
 		return ResponseEntity.created(URI.create("/employees/" + apiResponse.getData().getId())).body(apiResponse);
@@ -62,7 +64,7 @@ public class EmployeeController {
 	
 	@PutMapping("/{employeeId}")
 	@ResponseBody
-	public ResponseEntity<ApiStandardResponse<EmployeeResponseDTO>> editEmployee(@RequestBody EmployeeRequestDTO newEmployee, @PathVariable int employeeId) {
+	public ResponseEntity<ApiStandardResponse<EmployeeResponseDTO>> editEmployee(@RequestBody @Valid EmployeeRequestDTO newEmployee, @PathVariable int employeeId) {
 		EmployeeResponseDTO employeeResponseDTO = employeeService.editEmployee(newEmployee, employeeId);
 		ApiStandardResponse<EmployeeResponseDTO> apiResponse = new ApiStandardResponse<>(messageUtil.getMessage(EMPLOYEE_EDITED), employeeResponseDTO);
 		return ResponseEntity.ok().body(apiResponse);

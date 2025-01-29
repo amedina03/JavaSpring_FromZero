@@ -115,4 +115,56 @@ public class EmployeeServiceImplementationTest {
         Mockito.verify(departmentRepository, Mockito.times(1)).findById(newDepartmentId);
         Mockito.verify(employeeRepository, Mockito.times(1)).save(newMockEmployee);
     }
+    
+    @Test
+    void testEditEmployee_Fail_EmployeeNotFound() {
+    	int employeeId = 1;
+    	EmployeeRequestDTO newMockRequestEmployee = new EmployeeRequestDTO("Mock Employee Edit", 999);
+    	
+    	assertThrows(EmployeeNotFoundException.class, ()-> {
+    		employeeService.editEmployee(newMockRequestEmployee, employeeId);
+    	}, "Employee should exist previous to employee edition");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(0)).save(Mockito.any());
+    }
+    
+    @Test
+    void testEditEmployee_Fail_DepartmentNotFound() {
+    	int employeeId = 1;
+    	EmployeeRequestDTO newMockRequestEmployee = new EmployeeRequestDTO("Mock Employee Edit", 999);
+    	Department mockDepartment = new Department("IT");
+    	Employee retrievedEmployee = Employee.of(newMockRequestEmployee, mockDepartment);
+    	retrievedEmployee.setId(employeeId);
+    	
+        Mockito.when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(retrievedEmployee));
+    	
+    	assertThrows(DepartmentNotFoundException.class, ()-> {
+    		employeeService.editEmployee(newMockRequestEmployee, employeeId);
+    	}, "Department should exist previous to employee edition");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(0)).save(Mockito.any());
+    }
+    
+    @Test
+    void testRemoveEmployee_Success() {
+    	int employeeId = 1;
+    	
+    	Mockito.when(employeeRepository.existsById(employeeId)).thenReturn(true);
+    	Mockito.doNothing().when(employeeRepository).deleteById(employeeId);
+    	employeeService.removeEmployee(employeeId);
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(1)).deleteById(employeeId);
+    }
+    
+    @Test
+    void testRemoveEmployee_Fail_EmployeeNotFound() {
+    	int employeeId = 1;
+    	
+    	Mockito.when(employeeRepository.existsById(employeeId)).thenReturn(false);
+    	assertThrows(EmployeeNotFoundException.class, () -> {
+        	employeeService.removeEmployee(employeeId);
+    	}, "Employee should exist previous to employee removal");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(0)).deleteById(Mockito.any());
+    }
 }

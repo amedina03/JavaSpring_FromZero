@@ -3,13 +3,14 @@ package com.example.app.dtos;
 import jakarta.validation.constraints.NotNull;
 
 public class EmployeeRequestDTO {
-	@NotNull
+	@NotNull(message = "Employee name cannot be null")
 	String name;
-	
-	@NotNull
+
+    @NotNull(message = "Department ID is required")
 	int departmentId;
 
 	public EmployeeRequestDTO() {}
+	
 	public EmployeeRequestDTO(String name) {
 		this.name = name;
 	}

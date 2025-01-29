@@ -23,7 +23,7 @@ public class Department {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
-	@NotNull
+	@NotNull(message = "Name is required")
 	@Size(max = 128, message = "Name cannot exceed 128 characters")
 	private String name;
 	
