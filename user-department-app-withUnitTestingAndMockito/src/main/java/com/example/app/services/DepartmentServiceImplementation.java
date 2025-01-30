@@ -44,7 +44,7 @@ public class DepartmentServiceImplementation implements DepartmentService{
 	}
 	
 	public DepartmentResponseDTO addDepartment(Department newDepartment) {    
-		if(departmentRepository.findByName(newDepartment.getName()).isPresent()) {
+		if(departmentRepository.existsByName(newDepartment.getName())) {
 			throw new DuplicateDepartmentEntryException(DEPARTMENT_DUPLICATE_ENTRY);
 		}
 		Department addedDepartment = departmentRepository.save(newDepartment);
@@ -53,18 +53,20 @@ public class DepartmentServiceImplementation implements DepartmentService{
 	}
 	
 	public DepartmentResponseDTO editDepartment(Department newDepartment, int departmentId) {
-		if(departmentRepository.findById(departmentId).isPresent()) {
-			newDepartment.setId(departmentId);
-			Department addedDepartment = departmentRepository.save(newDepartment);
-			return DepartmentResponseDTO.of(addedDepartment);
+		if(departmentRepository.existsByName(newDepartment.getName())) {
+			throw new DuplicateDepartmentEntryException(DEPARTMENT_DUPLICATE_ENTRY);
 		}
-		throw new DepartmentNotFoundException(messageUtil.getMessage(DEPARTMENT_NOT_FOUND));
+		Department existingDepartment = departmentRepository.findById(departmentId)
+		        .orElseThrow(() -> new DepartmentNotFoundException(messageUtil.getMessage(DEPARTMENT_NOT_FOUND)));
+		existingDepartment.setName(newDepartment.getName());
+		Department updatedDepartment = departmentRepository.save(existingDepartment);
+		return DepartmentResponseDTO.of(updatedDepartment);
 	}
 	
 	public void removeDepartment(int departmentId) {
-		if(departmentRepository.findById(departmentId).isPresent()) {
-			departmentRepository.deleteById(departmentId);
+		if(!departmentRepository.existsById(departmentId)) {
+			throw new DepartmentNotFoundException(messageUtil.getMessage(DEPARTMENT_NOT_FOUND));
 		}
-		throw new DepartmentNotFoundException(messageUtil.getMessage(DEPARTMENT_NOT_FOUND));
+		departmentRepository.deleteById(departmentId);
 	}
 }

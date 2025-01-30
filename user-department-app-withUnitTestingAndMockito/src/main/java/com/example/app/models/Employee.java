@@ -31,6 +31,9 @@ public class Employee {
 	@JsonBackReference
 	private Department department;
 	
+	public Employee () {
+	}
+	
 	public static Employee of(EmployeeRequestDTO employeeRequestDTO, Department department) {
         Employee employee = new Employee();
         employee.setName(employeeRequestDTO.getName());

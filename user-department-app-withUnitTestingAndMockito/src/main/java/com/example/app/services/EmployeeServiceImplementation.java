@@ -61,6 +61,7 @@ public class EmployeeServiceImplementation implements EmployeeService{
 		Department department = this.departmentRepository.findById(newEmployee.getDepartmentId()).orElseThrow(() -> new DepartmentNotFoundException(messageUtil.getMessage(DEPARTMENT_NOT_FOUND)));
 
 		existingEmployee.setId(employeeId);
+		existingEmployee.setName(newEmployee.getName());
 		existingEmployee.setDepartment(department);
         Employee addedEmployee = employeeRepository.save(existingEmployee);
         return EmployeeResponseDTO.of(addedEmployee);

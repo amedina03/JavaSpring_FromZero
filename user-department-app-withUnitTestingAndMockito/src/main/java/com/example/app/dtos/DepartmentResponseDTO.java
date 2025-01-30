@@ -15,6 +15,16 @@ public class DepartmentResponseDTO {
 		return new DepartmentResponseDTO(department.getId(), department.getName());
 	}
 	
+	public boolean equals(Object o) {
+		if(this == o)
+			return true;
+		if(this.getClass() != o.getClass())
+			return false;
+		DepartmentResponseDTO serializedObject = (DepartmentResponseDTO) o;
+		return serializedObject.getName() == this.getName() && 
+				serializedObject.getId() == this.getId();
+	}
+	
 	public int getId() {
 		return id;
 	}

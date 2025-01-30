@@ -8,4 +8,5 @@ import com.example.app.models.Department;
 
 public interface DepartmentRepositoryJPA extends JpaRepository<Department, Integer>{
 	Optional<Department> findByName(String name);
+	boolean existsByName(String name);
 }

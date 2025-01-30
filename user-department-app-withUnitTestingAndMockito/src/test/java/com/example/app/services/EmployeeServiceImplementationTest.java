@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,24 @@ public class EmployeeServiceImplementationTest {
     }
     
     @Test
+    void testGetAllEmployees_Success() {
+    	Department mockDepartment = new Department("IT");
+    	Employee mockEmployee1 = Employee.of(new EmployeeRequestDTO("Mock Employee 1"), mockDepartment);
+    	Employee mockEmployee2 = Employee.of(new EmployeeRequestDTO("Mock Employee 2"), mockDepartment);
+		List<Employee> employeeList = (Arrays.asList(mockEmployee1,mockEmployee2));
+    	List<EmployeeResponseDTO> expectedResponse = employeeList.stream().
+    			map(employee -> EmployeeResponseDTO.of(employee)).
+    			toList();
+    	
+    	Mockito.when(employeeRepository.findAll()).thenReturn(employeeList);
+    	List<EmployeeResponseDTO> result = employeeService.getAllEmployees();
+    	
+    	assertEquals(expectedResponse, result, "The employee response DTO should match the expected one");
+    	
+    	Mockito.verify(employeeRepository, Mockito.times(1)).findAll();
+    }
+    
+    @Test
     void testGetEmployeeById_Fail_EmployeeNotFound() {
     	int employeeId = 99;
     	Mockito.when(employeeRepository.findById(employeeId)).thenReturn(Optional.empty());
@@ -96,9 +116,10 @@ public class EmployeeServiceImplementationTest {
     
     @Test
     void testEditEmployee_Success() {
-    	Department newMockDepartment = new Department(2, "DevOps");
     	int employeeId = 1;
     	int newDepartmentId = 2;
+    	Department newMockDepartment = new Department("DevOps");
+    	newMockDepartment.setId(newDepartmentId);
     	EmployeeRequestDTO newMockRequestEmployee = new EmployeeRequestDTO("Mock Employee Edit", 2);
         Employee newMockEmployee = Employee.of(newMockRequestEmployee, newMockDepartment);
         newMockEmployee.setId(employeeId);
