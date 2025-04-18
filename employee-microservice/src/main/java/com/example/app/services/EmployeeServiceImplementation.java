@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.app.dtos.ApiResponseDTO;
+import com.example.app.dtos.ApiResponseStringDTO;
 import com.example.app.dtos.EmployeeRequestDTO;
 import com.example.app.dtos.EmployeeResponseDTO;
 import com.example.app.errors.DepartmentNotFoundException;
@@ -33,7 +33,7 @@ public class EmployeeServiceImplementation implements EmployeeService{
 	private final String departmentNameUri;
 	
 	public EmployeeServiceImplementation(EmployeeRepositoryJPA employeeRepository, MessageUtil messageUtil, WebClient.Builder webClientBuilder,
-			@Value("{departments.service.url}") String departmentBaseUrl, @Value("{department.uri}") String departmentUri, @Value("{department.name.uri}") String departmentNameUri) {
+			@Value("${departments.service.url}") String departmentBaseUrl, @Value("${department.uri}") String departmentUri, @Value("${department.name.uri}") String departmentNameUri) {
 		this.employeeRepository = employeeRepository;
 		this.messageUtil = messageUtil;
 		this.webClient = webClientBuilder.baseUrl(departmentBaseUrl).build();
@@ -99,23 +99,22 @@ public class EmployeeServiceImplementation implements EmployeeService{
 		employeeRepository.deleteById(employeeId);	   
 	}
 	
-	private String getDepartmentName(int departmentId) {
+	String getDepartmentName(int departmentId) {
 		checkIfDepartmentExists(departmentId);
-		ApiResponseDTO<String> response = webClient.
+		ApiResponseStringDTO response = webClient.
 				get().
 				uri(departmentNameUri, departmentId).
 				retrieve().
-				bodyToMono(new ParameterizedTypeReference<ApiResponseDTO<String>>() {}).
+				bodyToMono(new ParameterizedTypeReference<ApiResponseStringDTO>() {}).
 				block();
-
 	    if (response == null || response.getData() == null || response.getData().isEmpty()) {
 	        throw new IllegalStateException();
 	    }
 	    
-		return response.getData().get(0);
+		return response.getData();
 	}
 	
-	private void checkIfDepartmentExists(int departmentId) {
+	void checkIfDepartmentExists(int departmentId) {
 		ResponseEntity<Void> response = webClient.
 				head().
 				uri(departmentUri, departmentId).

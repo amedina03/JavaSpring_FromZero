@@ -11,9 +11,6 @@ public class EmployeeRequestDTO {
 
 	public EmployeeRequestDTO() {}
 	
-	public EmployeeRequestDTO(String name) {
-		this.name = name;
-	}
 	public EmployeeRequestDTO(String name, int departmentId) {
 		this.name = name;
 		this.departmentId = departmentId;
